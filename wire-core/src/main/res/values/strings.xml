@@ -1331,5 +1331,8 @@
     <string name="share_link_button">Share Link</string>
     <string name="revoke_link_button">Revoke Link</string>
     <string name="invitation_link_title">INVITE OTHERS WITH A LINK</string>
+    <string name="link_copied_toast">Link Copied!</string>
+    <string name="revoke_link_message">New guests will not be able to join with this link. Current guests will still have access.</string>
+    <string name="revoke_link_confirm">Revoke Link</string>
 
 </resources>

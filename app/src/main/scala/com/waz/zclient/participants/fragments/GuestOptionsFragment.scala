@@ -17,19 +17,22 @@
  */
 package com.waz.zclient.participants.fragments
 
-import android.content.{Context, DialogInterface}
+import android.content.{ClipData, ClipboardManager, Context, DialogInterface}
 import android.os.Bundle
 import android.support.v7.widget.SwitchCompat
 import android.view.animation.{AlphaAnimation, Animation}
 import android.view.{LayoutInflater, View, ViewGroup}
-import android.widget.{CompoundButton, TextView}
+import android.widget.{CompoundButton, LinearLayout, TextView}
 import com.waz.ZLog.ImplicitTag._
 import com.waz.service.ZMessaging
 import com.waz.threading.Threading
 import com.waz.utils.events.Signal
 import com.waz.utils.returning
+import com.waz.zclient.common.views.MenuRowButton
 import com.waz.zclient.conversation.ConversationController
-import com.waz.zclient.utils.ViewUtils
+import com.waz.zclient.ui.text.TypefaceTextView
+import com.waz.zclient.utils.ContextUtils.showToast
+import com.waz.zclient.utils.{RichView, ViewUtils}
 import com.waz.zclient.{FragmentHelper, R}
 
 class GuestOptionsFragment extends FragmentHelper {
@@ -49,6 +52,40 @@ class GuestOptionsFragment extends FragmentHelper {
   }
 
   private lazy val guestsTitle = view[TextView](R.id.guest_toggle_title)
+  private lazy val guestLinkText = returning(view[TypefaceTextView](R.id.link_button_link_text)) { text =>
+    convCtrl.currentConv.map(_.link).onUi {
+      case Some(link) =>
+        text.foreach(_.setVisibility(View.VISIBLE))
+        text.foreach(_.setText(link.url))
+      case None =>
+        text.foreach(_.setVisibility(View.GONE))
+    }
+  }
+  private lazy val guestLinkCreate = returning(view[LinearLayout](R.id.link_button_create_link)) { text =>
+    convCtrl.currentConv.map(_.link.isDefined).onUi { hasLink =>
+      text.foreach(_.setVisibility(if (hasLink) View.GONE else View.VISIBLE))
+    }
+  }
+  private lazy val copyLinkButton = returning(view[MenuRowButton](R.id.copy_link_button)) { button =>
+    convCtrl.currentConv.map(_.link.isDefined).onUi { hasLink =>
+      button.foreach(_.setVisibility(if (hasLink) View.VISIBLE else View.GONE))
+    }
+  }
+  private lazy val shareLinkButton = returning(view[MenuRowButton](R.id.share_link_button)) { button =>
+    convCtrl.currentConv.map(_.link.isDefined).onUi { hasLink =>
+      button.foreach(_.setVisibility(if (hasLink) View.VISIBLE else View.GONE))
+    }
+  }
+  private lazy val revokeLinkButton = returning(view[MenuRowButton](R.id.revoke_link_button)) { button =>
+    convCtrl.currentConv.map(_.link.isDefined).onUi { hasLink =>
+      button.foreach(_.setVisibility(if (hasLink) View.VISIBLE else View.GONE))
+    }
+  }
+  private lazy val guestLinkOptions = returning(view[ViewGroup](R.id.guest_link_options)) { linkOptions =>
+    convCtrl.currentConv.map(_.isTeamOnly).onUi { isTeamOnly =>
+      linkOptions.foreach(_.setVisibility(if (isTeamOnly) View.GONE else View.VISIBLE))
+    }
+  }
 
   // This is a workaround for the bug where child fragments disappear when
   // the parent is removed (as all children are first removed from the parent)
@@ -69,6 +106,51 @@ class GuestOptionsFragment extends FragmentHelper {
 
   override def onViewCreated(view: View, savedInstanceState: Bundle): Unit = {
     guestsSwitch
+    guestLinkText.foreach(linkText => linkText.onClick(copyToClipboard(linkText.getText.toString)))
+    guestLinkCreate.foreach(_.onClick {
+      (for {
+        zms <- zms.head
+        conv <- convCtrl.currentConv.head
+        link <- zms.conversations.createLink(conv.id)
+      } yield link).map {
+        case Left(_) => showToast(R.string.allow_guests_error_title)
+        case _ =>
+      } (Threading.Ui)
+    })
+
+    copyLinkButton.foreach(_.onClick(convCtrl.currentConv.head.map(_.link.foreach(link => copyToClipboard(link.url)))(Threading.Ui)))
+    shareLinkButton.foreach(_.onClick(showToast("To do! oops")))
+    revokeLinkButton.foreach(_.onClick {
+
+      ViewUtils.showAlertDialog(getContext,
+        R.string.empty_string,
+        R.string.revoke_link_message,
+        R.string.revoke_link_confirm,
+        android.R.string.cancel,
+        new DialogInterface.OnClickListener {
+          override def onClick(dialog: DialogInterface, which: Int): Unit = {
+            (for {
+              zms <- zms.head
+              conv <- convCtrl.currentConv.head
+              res <- zms.conversations.removeLink(conv.id)
+            } yield res).map {
+              case Left(_) => showToast(R.string.allow_guests_error_title)
+              case _ =>
+            } (Threading.Ui)
+            dialog.dismiss()
+          }
+        }, new DialogInterface.OnClickListener {
+          override def onClick(dialog: DialogInterface, which: Int): Unit = dialog.dismiss()
+        })
+    })
+    guestLinkOptions
+  }
+
+  private def copyToClipboard(text: String): Unit = {
+    val clipboard: ClipboardManager = getContext.getSystemService(Context.CLIPBOARD_SERVICE).asInstanceOf[ClipboardManager]
+    val clip: ClipData = ClipData.newPlainText("", text) //TODO: label?
+    clipboard.setPrimaryClip(clip)
+    showToast(R.string.link_copied_toast)
   }
 
   override def onResume() = {
