@@ -21,6 +21,7 @@ import android.view.View;
 import com.waz.api.Message;
 import com.waz.model.ConvId;
 import com.waz.model.IntegrationId;
+import com.waz.model.MessageId;
 import com.waz.model.ProviderId;
 
 public interface ConversationScreenControllerObserver {
@@ -39,7 +40,7 @@ public interface ConversationScreenControllerObserver {
 
     void onHideOtrClient();
 
-    void onShowLikesList(Message message);
+    void onShowLikesList(MessageId messageId);
 
     void onShowIntegrationDetails(ProviderId providerId, IntegrationId integrationId);
 }

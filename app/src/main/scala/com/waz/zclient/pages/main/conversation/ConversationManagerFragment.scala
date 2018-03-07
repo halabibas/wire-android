@@ -51,7 +51,7 @@ import com.waz.zclient.controllers.drawing.IDrawingController.DrawingDestination
 import com.waz.zclient.controllers.drawing.{DrawingObserver, IDrawingController}
 import com.waz.zclient.controllers.location.{ILocationController, LocationObserver}
 import com.waz.zclient.controllers.navigation.{INavigationController, Page}
-import com.waz.zclient.conversation.ConversationController
+import com.waz.zclient.conversation.{ConversationController, LikesListFragment}
 import com.waz.zclient.conversation.creation.{NewConversationController, NewConversationFragment, NewConversationPickFragment}
 import com.waz.zclient.core.stores.connect.IConnectStore
 import com.waz.zclient.core.stores.conversation.ConversationChangeRequester
@@ -167,7 +167,7 @@ class ConversationManagerFragment extends BaseFragment[Container] with FragmentH
         pickUserController.hidePickUser(pickUserDestination)
         true
       case _: LikesListFragment =>
-        getChildFragmentManager.popBackStack(LikesListFragment.TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        closeLikesList()
         true
       case _ if screenController.isShowingParticipant =>
         screenController.hideParticipants(true, false)
@@ -190,7 +190,7 @@ class ConversationManagerFragment extends BaseFragment[Container] with FragmentH
     getChildFragmentManager.popBackStack(ParticipantFragment.TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
   }
 
-  override def onShowLikesList(message: Message): Unit = showFragment(LikesListFragment.newInstance(message), LikesListFragment.TAG)
+  override def onShowLikesList(messageId: MessageId): Unit = showFragment(LikesListFragment.newInstance(messageId), LikesListFragment.Tag)
 
   override def onShowIntegrationDetails(providerId: ProviderId, integrationId: IntegrationId): Unit = {
     navigationController.setRightPage(Page.INTEGRATION_DETAILS, ConversationManagerFragment.Tag)
@@ -291,12 +291,6 @@ class ConversationManagerFragment extends BaseFragment[Container] with FragmentH
     getChildFragmentManager.popBackStack(LocationFragment.TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
   }
 
-  override def closeLikesList(): Unit = {
-    val fragment = getChildFragmentManager.findFragmentById(R.id.fl__conversation_manager__message_list_container)
-    if (fragment.isInstanceOf[LikesListFragment])
-      getChildFragmentManager.popBackStack(LikesListFragment.TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-  }
-
   private def showFragment(fragment: Fragment, tag: String): Unit = {
     getChildFragmentManager.beginTransaction
       .setCustomAnimations(
@@ -308,6 +302,9 @@ class ConversationManagerFragment extends BaseFragment[Container] with FragmentH
       .addToBackStack(tag)
       .commit
   }
+
+  def closeLikesList(): Unit =
+    getChildFragmentManager.popBackStack(LikesListFragment.Tag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
   override def onShowEditConversationName(show: Boolean): Unit = {}
 

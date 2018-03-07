@@ -18,10 +18,11 @@
 package com.waz.zclient.pages.main.conversation.controller;
 
 import android.view.View;
-import com.waz.api.Message;
+
 import com.waz.api.User;
 import com.waz.model.ConvId;
 import com.waz.model.IntegrationId;
+import com.waz.model.MessageId;
 import com.waz.model.ProviderId;
 import com.waz.model.UserId;
 import com.waz.zclient.pages.main.participants.dialog.DialogLaunchMode;
@@ -185,9 +186,9 @@ public class ConversationScreenController implements IConversationScreenControll
     }
 
     @Override
-    public void showLikesList(Message message) {
+    public void showLikesList(MessageId messageId) {
         for (ConversationScreenControllerObserver observer : conversationScreenControllerObservers) {
-            observer.onShowLikesList(message);
+            observer.onShowLikesList(messageId);
         }
     }
 

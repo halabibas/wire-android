@@ -18,10 +18,11 @@
 package com.waz.zclient.pages.main.conversation.controller;
 
 import android.view.View;
-import com.waz.api.Message;
+
 import com.waz.api.User;
 import com.waz.model.ConvId;
 import com.waz.model.IntegrationId;
+import com.waz.model.MessageId;
 import com.waz.model.ProviderId;
 import com.waz.model.UserId;
 import com.waz.zclient.pages.main.participants.dialog.DialogLaunchMode;
@@ -68,7 +69,7 @@ public interface IConversationScreenController {
 
     void hideOtrClient();
 
-    void showLikesList(Message message);
+    void showLikesList(MessageId messageId);
 
     void showIntegrationDetails(ProviderId providerId, IntegrationId integrationId);
 }

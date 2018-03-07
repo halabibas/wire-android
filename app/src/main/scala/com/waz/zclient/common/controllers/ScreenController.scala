@@ -20,7 +20,6 @@ package com.waz.zclient.common.controllers
 import android.content.Context
 import android.view.View
 import com.waz.model.MessageId
-import com.waz.service.ZMessaging
 import com.waz.zclient.Intents.ShowDevicesIntent
 import com.waz.zclient.pages.main.conversation.controller.IConversationScreenController
 import com.waz.zclient.participants.ParticipantsController
@@ -40,6 +39,6 @@ class ScreenController(implicit injector: Injector, context: Context) extends In
     participantsController.showParticipantsRequest ! (anchorView, showDeviceTabIfSingle)
   }
 
-  def showUsersWhoLike(mId: MessageId) = conversationController.showLikesList(ZMessaging.currentUi.messages.cachedOrNew(mId))
+  def showUsersWhoLike(mId: MessageId) = conversationController.showLikesList(mId)
 
 }

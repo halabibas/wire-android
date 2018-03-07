@@ -292,7 +292,7 @@ class ParticipantFragment extends BaseFragment[ParticipantFragment.Container] wi
 
   override def onHideOtrClient(): Unit = getChildFragmentManager.popBackStack
 
-  override def onShowLikesList(message: Message): Unit = {}
+  override def onShowLikesList(messageId: MessageId): Unit = {}
 
   override def onShowIntegrationDetails(providerId: ProviderId, integrationId: IntegrationId): Unit = {}
 

@@ -20,7 +20,6 @@ package com.waz.zclient.conversation
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.{LayoutInflater, ViewGroup}
-import com.waz.api.User
 import com.waz.model.{UserData, UserId}
 import com.waz.utils.events.Signal
 import com.waz.zclient.common.controllers.ThemeController
@@ -56,7 +55,7 @@ class LikesAdapter(context: Context) extends RecyclerView.Adapter[RecyclerView.V
 
   def getItemCount: Int = likesUsers.size
 
-  def setLikes(likes: Array[User]): Unit = likesUserIds ! likes.map(u => UserId(u.getId)).toSet
+  def setLikes(likes: Set[UserId]): Unit = likesUserIds ! likes
 }
 
 object LikesAdapter {
