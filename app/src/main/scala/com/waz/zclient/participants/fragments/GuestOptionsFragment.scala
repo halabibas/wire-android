@@ -19,6 +19,7 @@ package com.waz.zclient.participants.fragments
 
 import android.content.{ClipData, ClipboardManager, Context, DialogInterface}
 import android.os.Bundle
+import android.support.v4.app.ShareCompat
 import android.support.v7.widget.SwitchCompat
 import android.view.animation.{AlphaAnimation, Animation}
 import android.view.{LayoutInflater, View, ViewGroup}
@@ -119,7 +120,15 @@ class GuestOptionsFragment extends FragmentHelper {
     })
 
     copyLinkButton.foreach(_.onClick(convCtrl.currentConv.head.map(_.link.foreach(link => copyToClipboard(link.url)))(Threading.Ui)))
-    shareLinkButton.foreach(_.onClick(showToast("To do! oops")))
+    shareLinkButton.foreach(_.onClick {
+      convCtrl.currentConv.head.map(_.link.foreach { link =>
+        val intentBuilder = ShareCompat.IntentBuilder.from(getActivity)
+        //intentBuilder.setChooserTitle(R.string.conversation__action_mode__fwd__chooser__title)
+        intentBuilder.setType("text/plain")
+        intentBuilder.setText(link.url)
+        intentBuilder.startChooser()
+      })(Threading.Ui)
+    })
     revokeLinkButton.foreach(_.onClick {
 
       ViewUtils.showAlertDialog(getContext,
