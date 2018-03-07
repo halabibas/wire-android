@@ -60,8 +60,107 @@
         android:paddingStart="@dimen/wire__padding__regular"
         android:paddingEnd="@dimen/wire__padding__regular"
         android:textColor="?wireSecondaryTextColor"
-        app:w_font="@string/wire__typeface__light"
+        app:w_font="@string/wire__typeface__regular"
         android:textSize="@dimen/wire__text_size__small"
     />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/wire__divider__height__thin"
+        android:background="@color/light_graphite_40"
+        android:layout_margin="@dimen/wire__padding__regular"/>
+
+    <com.waz.zclient.ui.text.TypefaceTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/wire__padding__regular"
+        android:layout_marginEnd="@dimen/wire__padding__regular"
+        android:textAlignment="textStart"
+        android:gravity="center_vertical|start"
+        android:textSize="@dimen/wire__text_size__small"
+        android:textColor="?wireSecondaryTextColor"
+        app:w_font="@string/wire__typeface__medium"
+        android:text="@string/invitation_link_title"/>
+
+    <com.waz.zclient.ui.text.TypefaceTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/wire__padding__regular"
+        android:textAlignment="textStart"
+        android:gravity="center_vertical|start"
+        android:textSize="@dimen/wire__text_size__small"
+        android:textColor="?wireSecondaryTextColor"
+        app:w_font="@string/wire__typeface__regular"
+        android:text="@string/invitation_link_description"/>
+
+    <FrameLayout
+        android:id="@+id/link_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/menu_item_height"
+        style="?wireBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <com.waz.zclient.ui.text.TypefaceTextView
+            android:id="@+id/link_button_link_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="?wirePrimaryTextColor"
+            app:w_font="@string/wire__typeface__regular"
+            android:padding="@dimen/wire__padding__regular"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/link_button_create_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <com.waz.zclient.ui.text.GlyphTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/glyph__link"
+                android:textColor="@color/accent_blue"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"/>
+
+            <com.waz.zclient.ui.text.TypefaceTextView
+                android:layout_marginStart="@dimen/wire__padding__small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/accent_blue"
+                app:w_font="@string/wire__typeface__regular"
+                android:text="@string/create_link_button"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <com.waz.zclient.common.views.MenuRowButton
+        android:layout_marginTop="@dimen/wire__padding__regular"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/menu_item_height"
+        app:buttonTextColor="?wirePrimaryTextColor"
+        app:buttonText="@string/copy_link_button"
+        app:buttonIcon="@string/glyph__copy"/>
+
+    <com.waz.zclient.common.views.MenuRowButton
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/menu_item_height"
+        app:buttonTextColor="?wirePrimaryTextColor"
+        app:buttonText="@string/share_link_button"
+        app:buttonIcon="@string/glyph__share"/>
+
+    <com.waz.zclient.common.views.MenuRowButton
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/menu_item_height"
+        app:buttonTextColor="@color/accent_red"
+        app:buttonText="@string/revoke_link_button"
+        app:buttonIcon="@string/glyph__close"/>
+
 
 </LinearLayout>
