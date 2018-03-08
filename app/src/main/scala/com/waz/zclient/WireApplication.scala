@@ -185,8 +185,9 @@ object WireApplication {
     bind [ConversationListController]   to new ConversationListController()
     bind [IntegrationDetailsController] to new IntegrationDetailsController()
     bind [NewConversationController]    to new NewConversationController()
-    bind [ParticipantsController]          to new ParticipantsController()
-    bind [UsersController]           to new UsersController()
+    bind [ParticipantsController]       to new ParticipantsController()
+    bind [UsersController]              to new UsersController()
+    bind [SpinnerController]            to new SpinnerController()
 
     /**
       * Since tracking controllers will immediately instantiate other necessary controllers, we keep them separated

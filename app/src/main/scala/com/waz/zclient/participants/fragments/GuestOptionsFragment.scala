@@ -34,7 +34,7 @@ import com.waz.zclient.conversation.ConversationController
 import com.waz.zclient.ui.text.TypefaceTextView
 import com.waz.zclient.utils.ContextUtils.showToast
 import com.waz.zclient.utils.{RichView, ViewUtils}
-import com.waz.zclient.{FragmentHelper, R}
+import com.waz.zclient.{FragmentHelper, R, SpinnerController}
 
 class GuestOptionsFragment extends FragmentHelper {
 
@@ -45,6 +45,7 @@ class GuestOptionsFragment extends FragmentHelper {
   private lazy val zms = inject[Signal[ZMessaging]]
 
   private lazy val convCtrl = inject[ConversationController]
+  private lazy val spinnerController = inject[SpinnerController]
 
   //TODO look into using something more similar to SwitchPreference
   private lazy val guestsSwitch = returning(view[SwitchCompat](R.id.guest_toggle)) { vh =>
@@ -109,13 +110,17 @@ class GuestOptionsFragment extends FragmentHelper {
     guestsSwitch
     guestLinkText.foreach(linkText => linkText.onClick(copyToClipboard(linkText.getText.toString)))
     guestLinkCreate.foreach(_.onClick {
+      spinnerController.showSpinner(true)
       (for {
         zms <- zms.head
         conv <- convCtrl.currentConv.head
         link <- zms.conversations.createLink(conv.id)
       } yield link).map {
-        case Left(_) => showToast(R.string.allow_guests_error_title)
+        case Left(_) =>
+          spinnerController.showSpinner(false)
+          showToast(R.string.allow_guests_error_title)
         case _ =>
+          spinnerController.showSpinner(false)
       } (Threading.Ui)
     })
 
@@ -138,13 +143,17 @@ class GuestOptionsFragment extends FragmentHelper {
         android.R.string.cancel,
         new DialogInterface.OnClickListener {
           override def onClick(dialog: DialogInterface, which: Int): Unit = {
+            spinnerController.showSpinner(true)
             (for {
               zms <- zms.head
               conv <- convCtrl.currentConv.head
               res <- zms.conversations.removeLink(conv.id)
             } yield res).map {
-              case Left(_) => showToast(R.string.allow_guests_error_title)
+              case Left(_) =>
+                spinnerController.showSpinner(false)
+                showToast(R.string.allow_guests_error_title)
               case _ =>
+                spinnerController.showSpinner(false)
             } (Threading.Ui)
             dialog.dismiss()
           }
@@ -169,11 +178,13 @@ class GuestOptionsFragment extends FragmentHelper {
         override def onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean): Unit = {
 
           def setTeamOnly(): Unit = {
+            spinnerController.showSpinner(true)
             (for {
               z <- zms.head
               c <- convCtrl.currentConvId.head
               resp <- z.conversations.setToTeamOnly(c, !isChecked)
             } yield resp).map { resp =>
+              spinnerController.showSpinner(false)
               setGuestsSwitchEnabled(true)
               resp match {
                 case Right(_) => //
